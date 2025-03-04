@@ -14,7 +14,7 @@ mode = "annealing" # mode par défaut
 
 # Fonction principale du jeu
 def main():
-    global ia_active, message
+    global ia_active, message, mode
     run = True
 
     while run:
