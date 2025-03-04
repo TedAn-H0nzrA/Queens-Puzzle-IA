@@ -1,5 +1,5 @@
 import pygame
-from Models.Constant import WIDTH, HEIGHT, SCALE, TITRE, WHITE, GREY
+from Models.Constant import WIDTH, HEIGHT, SCALE, TITRE, BG
 from Models.Board import Board
 from AI.annealing import solve_n_queens
 
@@ -18,7 +18,7 @@ def main():
     run = True
 
     while run:
-        ecran.fill(WHITE)
+        ecran.fill(BG)
         board.draw_board(ecran, message)
 
         for event in pygame.event.get():

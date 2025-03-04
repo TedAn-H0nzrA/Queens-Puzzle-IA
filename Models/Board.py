@@ -1,5 +1,5 @@
 import pygame
-from Models.Constant import WIDTH, HEIGHT, WHITE, GREY
+from Models.Constant import WIDTH, HEIGHT, CASE_CLAIRE, CASE_SOMBRE
 
 class Board:
     def __init__(self):
@@ -18,7 +18,7 @@ class Board:
         for row in range(self.rows):
             for col in range(self.cols):
                 # Alternance des couleurs
-                color = WHITE if (row + col) % 2 == 0 else GREY
+                color = CASE_CLAIRE if (row + col) % 2 == 0 else CASE_SOMBRE
                 
                 # Calculer la position réelle avec l'offset
                 x = self.board_offset_x + col * self.square_size
