@@ -1,8 +1,7 @@
 import pygame
-from Models.Constant import WIDTH, HEIGHT, SCALE, TITRE, BG
+from Models.Constant import SCALE, TITRE, BG
 from Models.Board import Board
-from AI.annealing import solve_n_queens
-
+from AI.annealing_backtracing import solve_n_queens, solve_n_queens_with_backtracking
 pygame.init()
 ecran = pygame.display.set_mode(SCALE)
 pygame.display.set_caption(TITRE)
@@ -11,6 +10,7 @@ pygame.display.set_caption(TITRE)
 board = Board()
 ia_active = False
 message = ""
+mode = "annealing" # mode par défaut
 
 # Fonction principale du jeu
 def main():
@@ -33,7 +33,10 @@ def main():
                 # Activer l'IA après 1 ou 2 dames placées
                 if event.key == pygame.K_RETURN and len(board.queens) >= 1:
                     ia_active = True
-                    solution = solve_n_queens(board.queens)
+                    if mode == "annealing":
+                        solution = solve_n_queens(board.queens)
+                    else:
+                        solution = solve_n_queens_with_backtracking(board.queens)
                     
                     if solution:
                         board.queens = solution
@@ -48,6 +51,13 @@ def main():
                     ia_active = False
                     message = ""
 
+                # Changer de mode d'IA
+                if event.key == pygame.K_s:
+                    mode = "annealing"
+                    message = "Mode : Simulated Annealing"
+                if event.key == pygame.K_b:
+                    mode = "backtracking"
+                    message = "Mode : Backtracking"
         pygame.display.update()
     
     pygame.quit()

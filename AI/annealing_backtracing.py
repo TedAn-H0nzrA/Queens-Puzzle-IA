@@ -57,3 +57,29 @@ def solve_n_queens(initial_queens):
 
     # Dernière vérification
     return [(i, board[i]) for i in range(8)] if get_conflicts(board) == 0 else None
+
+def solve_n_queens_with_backtracking(initial_queens):
+    def is_safe(board, row, col):
+        for i in range(row):
+            if board[i] == col or \
+               abs(board[i] - col) == abs(i - row):
+                return False
+        return True
+
+    def backtrack(board, row):
+        if row == 8:
+            return [(i, board[i]) for i in range(8)]
+        for col in range(8):
+            if is_safe(board, row, col):
+                board[row] = col
+                result = backtrack(board, row + 1)
+                if result:
+                    return result
+                board[row] = -1  # Annuler le placement
+        return None
+
+    board = [-1] * 8
+    for x, y in initial_queens:
+        board[x] = y
+
+    return backtrack(board, len(initial_queens))
