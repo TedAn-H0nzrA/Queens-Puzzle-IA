@@ -1,17 +1,13 @@
-import pygame   
-# Les variables constants du jeu
+import pygame
 
+# Screen settings
 WIDTH, HEIGHT = 800, 600
 SCALE = (WIDTH, HEIGHT)
 TITRE = "Le Jeu des 8 Dames"
 
-# Gestion Frame
-FPS = 60
-clock = pygame.time.Clock()
-CLOCK = clock.tick(FPS)
-
-
-
-# Color
+# Colors
 GREY = (128, 128, 128)
 WHITE = (255, 255, 255)
+
+# Frame settings
+FPS = 60        

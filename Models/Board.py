@@ -5,36 +5,79 @@ class Board:
     def __init__(self):
         self.rows = 8
         self.cols = 8
-        self.square_size = WIDTH // self.cols
-        self.queens = []  # Stocke les positions des reines (x, y)
+        self.square_size = min(WIDTH, HEIGHT) // self.cols
+        self.queens = []
+        self.board_offset_x = (WIDTH - (self.square_size * self.cols)) // 2
+        self.board_offset_y = (HEIGHT - (self.square_size * self.rows)) // 2
 
-    def draw_board(self, surface):
-        """Dessine l'échiquier."""
+    def reset(self):
+        self.queens = []
+
+    def draw_board(self, surface, message):
+        # Dessiner l'échiquier
         for row in range(self.rows):
             for col in range(self.cols):
+                # Alternance des couleurs
                 color = WHITE if (row + col) % 2 == 0 else GREY
+                
+                # Calculer la position réelle avec l'offset
+                x = self.board_offset_x + col * self.square_size
+                y = self.board_offset_y + row * self.square_size
+                
+                # Dessiner le carré
                 pygame.draw.rect(surface, color, 
-                                 (col * self.square_size, row * self.square_size, 
+                                 (x, y, 
                                   self.square_size, self.square_size))
+                
+                # Dessiner les coordonnées (optionnel)
+                if col == 0 or row == self.rows - 1:
+                    font = pygame.font.Font(None, 24)
+                    # Coordonnées de ligne (1-8)
+                    if col == 0:
+                        row_text = font.render(str(8 - row), True, (0, 0, 0))
+                        surface.blit(row_text, (self.board_offset_x - 25, y + self.square_size // 3))
+                    
+                    # Coordonnées de colonne (A-H)
+                    if row == self.rows - 1:
+                        col_text = font.render(chr(65 + col), True, (0, 0, 0))
+                        surface.blit(col_text, (x + self.square_size // 3, y + self.square_size + 5))
 
-        # Dessiner les reines placées
+        # Dessiner les dames
         for (x, y) in self.queens:
+            # Calculer la position réelle de la dame
+            queen_x = self.board_offset_x + x * self.square_size + self.square_size // 2
+            queen_y = self.board_offset_y + y * self.square_size + self.square_size // 2
+            
             pygame.draw.circle(surface, (255, 0, 0), 
-                               (x * self.square_size + self.square_size // 2, 
-                                y * self.square_size + self.square_size // 2), 
+                               (queen_x, queen_y), 
                                self.square_size // 3)
+        
+        # Afficher le message
+        font = pygame.font.Font(None, 36)
+        text = font.render(message, True, (255, 0, 0))
+        surface.blit(text, (20, HEIGHT - 40))
 
     def is_valid_move(self, x, y):
-        """Vérifie si une reine peut être placée à la position (x, y)."""
+        # Vérifier si la position est valide pour une dame
         for qx, qy in self.queens:
-            if qx == x or qy == y:  # Même colonne ou même ligne
-                return False
-            if abs(qx - x) == abs(qy - y):  # Même diagonale
+            # Vérifier les colonnes et diagonales
+            if (qx == x or qy == y or 
+                abs(qx - x) == abs(qy - y)):
                 return False
         return True
 
     def place_queen(self, pos):
-        """Ajoute une reine si la case est valide."""
-        x, y = pos[0] // self.square_size, pos[1] // self.square_size
-        if self.is_valid_move(x, y):  # Vérifie avant d'ajouter
+        # Ajuster les coordonnées avec l'offset
+        x = (pos[0] - self.board_offset_x) // self.square_size
+        y = (pos[1] - self.board_offset_y) // self.square_size
+
+        # Vérifier les limites du plateau
+        if (x < 0 or x >= 8 or y < 0 or y >= 8):
+            return False
+
+        # Vérifier si le placement est valide
+        if self.is_valid_move(x, y):
             self.queens.append((x, y))
+            return True
+        
+        return False
