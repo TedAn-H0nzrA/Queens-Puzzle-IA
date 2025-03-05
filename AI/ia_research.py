@@ -69,6 +69,10 @@ def solve_n_queens_with_backtracking(initial_queens):
     def backtrack(board, row):
         if row == 8:
             return [(i, board[i]) for i in range(8)]
+        
+        # Si des dames sont déjà placées, on commence après
+        start_row = len(initial_queens)
+        
         for col in range(8):
             if is_safe(board, row, col):
                 board[row] = col

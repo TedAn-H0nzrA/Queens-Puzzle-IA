@@ -54,7 +54,7 @@ class Board:
         
         # Afficher le message
         font = pygame.font.Font(None, 36)
-        text = font.render(message, True, (255, 0, 0))
+        text = font.render(message, True, (2, 2, 2))
         surface.blit(text, (20, HEIGHT - 40))
 
     def is_valid_move(self, x, y):
@@ -75,9 +75,10 @@ class Board:
         if (x < 0 or x >= 8 or y < 0 or y >= 8):
             return False
 
-        # Vérifier si le placement est valide
-        #if self.is_valid_move(x, y):
+        # Limiter à 8 dames maximum
+        if len(self.queens) >= 8:
+            return False
+
+        # Ajouter la dame
         self.queens.append((x, y))
         return True
-        
-        return False
