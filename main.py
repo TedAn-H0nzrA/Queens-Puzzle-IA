@@ -1,7 +1,7 @@
 import pygame
 from Models.Constant import SCALE, TITRE, BG
 from Models.Board import Board
-from AI.annealing_backtracing import solve_n_queens_annealing, solve_n_queens_with_backtracking
+from AI.ia_research import solve_n_queens_annealing, solve_n_queens_with_backtracking
 pygame.init()
 ecran = pygame.display.set_mode(SCALE)
 pygame.display.set_caption(TITRE)
