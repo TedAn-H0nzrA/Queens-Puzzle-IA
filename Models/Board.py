@@ -76,8 +76,8 @@ class Board:
             return False
 
         # Vérifier si le placement est valide
-        if self.is_valid_move(x, y):
-            self.queens.append((x, y))
-            return True
+        #if self.is_valid_move(x, y):
+        self.queens.append((x, y))
+        return True
         
         return False

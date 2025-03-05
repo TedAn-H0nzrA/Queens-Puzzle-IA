@@ -1,7 +1,7 @@
 import pygame
 from Models.Constant import SCALE, TITRE, BG
 from Models.Board import Board
-from AI.annealing_backtracing import solve_n_queens, solve_n_queens_with_backtracking
+from AI.annealing_backtracing import solve_n_queens_annealing, solve_n_queens_with_backtracking
 pygame.init()
 ecran = pygame.display.set_mode(SCALE)
 pygame.display.set_caption(TITRE)
@@ -34,10 +34,10 @@ def main():
                 if event.key == pygame.K_RETURN and len(board.queens) >= 1:
                     ia_active = True
                     if mode == "annealing":
-                        solution = solve_n_queens(board.queens)
+                        solution = solve_n_queens_annealing(board.queens)
                     else:
                         solution = solve_n_queens_with_backtracking(board.queens)
-                    
+                        
                     if solution:
                         board.queens = solution
                         message = "Solution trouvée !"

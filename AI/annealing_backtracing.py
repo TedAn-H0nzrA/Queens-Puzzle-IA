@@ -1,7 +1,7 @@
 import random
 import math
 
-def solve_n_queens(initial_queens):
+def solve_n_queens_annealing(initial_queens):
     def get_conflicts(board):
         # Compter les conflits entre les dames
         conflicts = 0

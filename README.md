@@ -81,7 +81,7 @@ Intelligence Artificille/
 RANDRIANASOLO Ialimeva Rindraniaina
 RAVELONJANAHARY Tsanta Nomena Odon
 RAKOTOZAFY Teddy Andrianina
-Marcelo
+ANDRIAMASINA Marcelo
 Laurie Arthure
 
 ## Professeur
