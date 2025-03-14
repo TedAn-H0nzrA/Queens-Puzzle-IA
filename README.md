@@ -42,7 +42,7 @@ cd Intelligence Artificielle
 
 2. Installez les dépendances
 ```bash
-pip install pygame
+pip install -r requirements.txt
 ```
 
 3. Lancez le jeu
