@@ -1,93 +1,35 @@
-# Jeu des 8 Dames (8 Queens Puzzle)
+# Jeu des 8 Dames - IA
 
-## Description du Projet
-Un jeu interactif implémentant le célèbre problème mathématique des 8 dames, où le but est de placer 8 dames sur un échiquier de manière à ce qu'aucune dame ne puisse attaquer une autre.
+Ce projet implémente une solution au problème des 8 dames en utilisant deux algorithmes d'intelligence artificielle : le **recuit simulé** (Simulated Annealing) et le **backtracking**. L'application est développée en Python avec Pygame pour l'interface graphique.
 
-## Fonctionnalités
+## Table des matières
 
-### Placement des Dames
-- Placez manuellement des dames sur l'échiquier en cliquant
-- Validation en temps réel des positions des dames
-- Vérification des conflits (attaques) entre les dames
+- [Jeu des 8 Dames - IA](#jeu-des-8-dames---ia)
+  - [Table des matières](#table-des-matières)
+  - [Description](#description)
+  - [Prérequis](#prérequis)
+  - [Installation](#installation)
 
-### Algorithmes de Résolution
-Deux algorithmes de résolution sont disponibles :
-1. **Recuit Simulé (Simulated Annealing)**
-   - Algorithme probabiliste de recherche de solution
-   - Explore différentes configurations
-   - Adaptatif et flexible
+## Description
 
-2. **Backtracking**
-   - Algorithme de recherche exhaustive
-   - Exploration systématique de toutes les possibilités
-   - Garantit une solution si elle existe
+Le problème des 8 dames consiste à placer 8 dames sur un échiquier 8x8 de manière à ce qu'aucune dame ne puisse en attaquer une autre (pas sur la même ligne, colonne ou diagonale). Ce projet propose :
 
-### Commandes Clavier
-- `Entrée` : Résoudre le problème des 8 dames
-- `R` : Réinitialiser le plateau
-- `S` : Passer en mode Recuit Simulé
-- `B` : Passer en mode Backtracking
+- Une interface graphique pour interagir avec l'échiquier.
+- Deux algorithmes pour résoudre le problème automatiquement.
+- La possibilité de placer ou déplacer des dames manuellement.
 
 ## Prérequis
-- Python 3.10+
-- Pygame 2.6.1+
+
+- Python 3.6 ou supérieur
+- Bibliothèques Python :
+  - `pygame`
+  - `psutil`
+  - `numpy`
 
 ## Installation
 
-1. Clonez le dépôt
-```bash
-git clone <url-du-depot>
-cd Intelligence Artificielle
-```
+1. Clonez le dépôt :
 
-2. Installez les dépendances
-```bash
-pip install -r requirements.txt
-```
-
-3. Lancez le jeu
-```bash
-python3 main.py
-```
-
-## Structure du Projet
-```
-Intelligence Artificille/
-│
-├── main.py           # Point d'entrée principal
-├── Models/
-│   ├── Board.py      # Logique de l'échiquier
-│   └── Constant.py   # Constantes du jeu
-└── AI/
-    └── annealing.py  # Algorithmes de résolution
-```
-
-## Algorithmes
-
-### Recuit Simulé
-- Inspiré du recuit métallurgique
-- Exploration probabiliste de l'espace des solutions
-- Capacité d'échapper aux minimums locaux
-
-### Backtracking
-- Méthode de résolution par force brute
-- Explore systématiquement toutes les configurations possibles
-- Retourne en arrière quand une configuration est invalide
-
-## Captures d'Écran
-[Vous pouvez ajouter des captures d'écran ici]
-
-## Collaborateur
-RANDRIANASOLO Ialimeva Rindraniaina
-RAVELONJANAHARY Tsanta Nomena Odon
-RAKOTOZAFY Teddy Andrianina
-ANDRIAMASINA Marcelo
-Laurie Arthure
-
-## Professeur
-Madame Livaniaina
-
-## Remerciements
-- Communauté Pygame
-- Algorithmes de résolution de problèmes
-```
+   ```bash
+   git clone <URL-du-dépôt>
+   cd <nom-du-dépôt>

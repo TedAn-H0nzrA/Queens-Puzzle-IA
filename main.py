@@ -1,85 +1,115 @@
+# main.py
+# Point d'entrée du programme
+
 import pygame
-import time
-import tracemalloc
-from Models.Constant import SCALE, TITRE, BG
-from Models.Board import Board
-from AI.ia_research import solve_n_queens_annealing, solve_n_queens_with_backtracking
+import threading
+import os
+from models.constants import *
+from models.board import Board
+from ai.annealing import SimulatedAnnealing
+from ai.backtracking import Backtracking
+
+# Initialiser Pygame
 pygame.init()
-ecran = pygame.display.set_mode(SCALE)
-pygame.display.set_caption(TITRE)
 
-# Initialisation du plateau et de l'IA
+# Créer la fenêtre
+WIN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption("Jeu des 8 Dames - IA")
+
+# Charger les polices
+pygame.font.init()
+FONT = pygame.font.SysFont(None, FONT_SIZE)
+TITLE_FONT = pygame.font.SysFont(None, TITLE_FONT_SIZE)
+INFO_FONT = pygame.font.SysFont(None, INFO_FONT_SIZE)
+
+# Créer le répertoire pour les ressources s'il n'existe pas
+os.makedirs("assets/images", exist_ok=True)
+
+# Créer l'échiquier
 board = Board()
-ia_active = False
-message = ""
-mode = "annealing" # mode par défaut
-execution_time = 0
-memory_usage = 0
 
-# Fonction principale du jeu
-def main():
-    global ia_active, message, mode, execution_time, memory_usage
-    run = True
-    clock = pygame.time.Clock()
+# Créer les algorithmes d'IA
+annealing = SimulatedAnnealing(board)
+backtracking = Backtracking(board)
 
-    while run:
-        ecran.fill(BG)
-        board.draw_board(ecran, message)
+# Variables
+running = True
+solving = False
+algorithm_thread = None
+info_text = ""
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                run = False
-            
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                # Limiter à 8 dames maximum
-                if len(board.queens) < 8:
-                    board.place_queen(pygame.mouse.get_pos())
-            
-            if event.type == pygame.KEYDOWN:
-                # Activer l'IA après au moins 1 dame placée
-                if event.key == pygame.K_RETURN and len(board.queens) >= 1:
-                    # Préparer pour mesurer les performances
-                    tracemalloc.start()
-                    start_time = time.time()
+def update_board(positions, energy_or_col, temp_or_none=None):
+    """Met à jour l'échiquier avec les positions actuelles (callback pour les algorithmes)"""
+    global info_text
+    board.set_queen_positions(positions)
+    if temp_or_none is not None:  # Simulated Annealing
+        info_text = f"Énergie: {energy_or_col} | Température: {temp_or_none:.2f}"
+    else:  # Backtracking
+        info_text = f"Colonnes résolues: {energy_or_col}"
 
-                    # Compléter le reste des dames
-                    if mode == "annealing":
-                        solution = solve_n_queens_annealing(board.queens)
-                    else:
-                        solution = solve_n_queens_with_backtracking(board.queens)
-                    
-                    # Calculer le temps et la mémoire
-                    execution_time = time.time() - start_time
-                    memory_usage = tracemalloc.get_traced_memory()[1]
-                    tracemalloc.stop()
+def run_algorithm(algorithm):
+    """Exécute l'algorithme dans un thread séparé"""
+    global solving, info_text
+    solving = True
+    if isinstance(algorithm, SimulatedAnnealing):
+        success, state, energy = algorithm.solve(callback=update_board)
+        stats = algorithm.get_stats()
+        info_text = f"Solution trouvée: {success} | Énergie: {energy} | Étapes: {stats['steps']} | Temps: {stats['time']:.2f}s"
+    elif isinstance(algorithm, Backtracking):
+        success, solution = algorithm.solve(callback=update_board)
+        stats = algorithm.get_stats()
+        info_text = f"Solution trouvée: {success} | Étapes: {stats['steps']} | Temps: {stats['time']:.2f}s"
+    solving = False
 
-                    if solution:
-                        board.queens = solution
-                        message = f"Solution trouvée ! Temps: {execution_time:.4f}s, Mémoire: {memory_usage/1024:.2f} Ko"
-                    else:
-                        message = "Aucune solution trouvée. Réessayez."
-                        ia_active = False
-                
-                # Réinitialiser le plateau
-                if event.key == pygame.K_r:
-                    board.reset()
-                    ia_active = False
-                    message = ""
-                    execution_time = 0
-                    memory_usage = 0
-
-                # Changer de mode d'IA
-                if event.key == pygame.K_s:
-                    mode = "annealing"
-                    message = "Mode : Recuit Simulé"
-                if event.key == pygame.K_b:
-                    mode = "backtracking"
-                    message = "Mode : Backtracking"
+# Boucle principale
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
         
-        pygame.display.update()
-        clock.tick(60)  # Limiter à 60 FPS
-    
-    pygame.quit()
+        elif event.type == pygame.KEYDOWN:
+            if event.key == KEY_QUIT:  # 'q' pour quitter
+                running = False
+            elif event.key == KEY_RESET and not solving:  # 'r' pour réinitialiser
+                board.clear()
+                info_text = "Échiquier réinitialisé"
+            elif event.key == KEY_ANNEALING and not solving:  # 'a' pour recuit simulé
+                algorithm_thread = threading.Thread(target=run_algorithm, args=(annealing,))
+                algorithm_thread.start()
+                info_text = "Recuit simulé en cours..."
+            elif event.key == KEY_BACKTRACKING and not solving:  # 'b' pour backtracking
+                algorithm_thread = threading.Thread(target=run_algorithm, args=(backtracking,))
+                algorithm_thread.start()
+                info_text = "Backtracking en cours..."
+        
+        elif event.type == pygame.MOUSEBUTTONDOWN and not solving:
+            # Convertir les coordonnées de la souris en position sur l'échiquier
+            pos = pygame.mouse.get_pos()
+            col = (pos[0] - BOARD_X) // SQUARE_SIZE
+            row = (pos[1] - BOARD_Y) // SQUARE_SIZE
+            if 0 <= row < BOARD_SIZE and 0 <= col < BOARD_SIZE:
+                board.select(row, col)
+                info_text = f"Case sélectionnée: ({row}, {col})"
 
-if __name__ == "__main__":
-    main()
+    # Dessiner l'échiquier
+    board.draw(WIN)
+
+    # Afficher le titre
+    title = TITLE_FONT.render("Jeu des 8 Dames", True, WHITE)
+    WIN.blit(title, (SCREEN_WIDTH // 2 - title.get_width() // 2, 20))
+
+    # Afficher les informations
+    info = INFO_FONT.render(info_text, True, WHITE)
+    WIN.blit(info, (10, SCREEN_HEIGHT - 30))
+
+    # Afficher les instructions
+    instructions = INFO_FONT.render("a: Recuit | b: Backtracking | r: Réinitialiser | q: Quitter", True, WHITE)
+    WIN.blit(instructions, (10, SCREEN_HEIGHT - 50))
+
+    # Mettre à jour l'affichage
+    pygame.display.flip()
+
+# Nettoyer et quitter
+if algorithm_thread and algorithm_thread.is_alive():
+    algorithm_thread.join()
+pygame.quit()
